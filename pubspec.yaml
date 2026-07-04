@@ -1,7 +1,7 @@
-name: xxo25
-description: "Bug WhatsApp Crasher"
+name: lx0025
+description: "Sikma"
 publish_to: 'none'
-version: 2.0.0
+version: 4.1.0
 
 environment:
   sdk: ^3.8.1
@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.5
+  http: ^1.1.0
   url_launcher: ^6.2.6
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.2.2
@@ -18,11 +18,12 @@ dependencies:
   web_socket_channel: ^2.4.0
   network_info_plus: ^4.1.0
   permission_handler: ^11.0.0
-  video_player: ^2.9.2
-  font_awesome_flutter: ^10.7.0
-  path_provider: ^2.1.1
-  share_plus: ^7.0.1
-  chewie: ^1.5.2
+  video_player: ^2.8.6
+  webview_flutter: ^4.4.2
+  shimmer: ^3.0.0
+  reorderables: ^0.6.0
+  intl: ^0.19.0
+  font_awesome_flutter: ^10.5.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1 # versi terbaru saat ini
@@ -42,16 +43,22 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/logo.jpg
+    - assets/images/ryn.png
+    - assets/images/aw.png
+    - assets/images/epep.png
+    - assets/images/bg.png
+    - assets/images/title.png
+    - assets/images/rynn.png
     - assets/images/logo.png
-    - assets/videos/landing.mp4
     - assets/videos/splash.mp4
+    - assets/videos/login.mp4
+    - assets/videos/r.mp4
     - assets/videos/banner.mp4
 
   fonts:
     - family: Orbitron
       fonts:
-        - asset: fonts/Orbitron-Regular.ttf
+        - asset: fonts/Rajdhani-Regular.ttf
     - family: ShareTechMono
       fonts:
         - asset: fonts/ShareTechMono-Regular.ttf
