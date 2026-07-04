@@ -15,20 +15,10 @@ class WifiKillerPage extends StatefulWidget {
 class _WifiKillerPageState extends State<WifiKillerPage> {
   String ssid = "-";
   String ip = "-";
-  String frequency = "-";
+  String frequency = "-"; // Placeholder, not supported by network_info_plus
   String routerIp = "-";
   bool isKilling = false;
   Timer? _loopTimer;
-
-  // 🎨 PALETTE BIRU - Oceanic Blue
-  final Color primaryDark = const Color(0xFF0A1929);      // Dark navy blue
-  final Color primaryBlue = const Color(0xFF2B4F8C);      // Medium blue
-  final Color accentBlue = const Color(0xFF1E3A6F);       // Dark blue accent
-  final Color lightBlue = const Color(0xFF4A7DB5);        // Light blue
-  final Color softWhite = const Color(0xFFF0F4FA);        // Soft white with blue tint
-  final Color cardBlue = const Color(0xFF13263E);         // Card background blue
-  final Color tealAccent = const Color(0xFF1B9C9C);       // Teal accent
-  final Color cyanLight = const Color(0xFF4ECDC4);        // Cyan light
 
   @override
   void initState() {
@@ -39,6 +29,7 @@ class _WifiKillerPageState extends State<WifiKillerPage> {
   Future<void> _loadWifiInfo() async {
     final info = NetworkInfo();
 
+    // Request location permission
     final status = await Permission.locationWhenInUse.request();
     if (!status.isGranted) {
       _showAlert("Permission Denied", "Akses lokasi diperlukan untuk membaca info WiFi.");
@@ -54,8 +45,10 @@ class _WifiKillerPageState extends State<WifiKillerPage> {
         ssid = name ?? "-";
         ip = ipAddr ?? "-";
         routerIp = gateway ?? "-";
-        frequency = "-";
+        frequency = "-"; // Not available in network_info_plus
       });
+
+      print("Router IP: $routerIp");
     } catch (e) {
       setState(() {
         ssid = ip = frequency = routerIp = "Error";
@@ -99,32 +92,25 @@ class _WifiKillerPageState extends State<WifiKillerPage> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: cardBlue,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: cyanLight.withOpacity(0.3)),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: cyanLight,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Orbitron',
-          ),
-        ),
-        content: Text(
-          message,
-          style: TextStyle(
-            color: softWhite,
-            fontSize: 16,
-            fontFamily: 'ShareTechMono',
-          ),
-        ),
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(title,
+            style: const TextStyle(
+              color: Color(0xFF8B0000),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Orbitron',
+            )),
+        content: Text(message,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontFamily: 'ShareTechMono',
+            )),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("OK", style: TextStyle(color: cyanLight)),
+            child: const Text("OK", style: TextStyle(color: Color(0xFF8B0000))),
           ),
         ],
       ),
@@ -136,8 +122,8 @@ class _WifiKillerPageState extends State<WifiKillerPage> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Text("$label: ", style: TextStyle(color: softWhite.withOpacity(0.7), fontWeight: FontWeight.bold)),
-          Expanded(child: Text(value, style: TextStyle(color: softWhite))),
+          Text("$label: ", style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+          Expanded(child: Text(value, style: const TextStyle(color: Colors.white))),
         ],
       ),
     );
@@ -152,21 +138,20 @@ class _WifiKillerPageState extends State<WifiKillerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryDark,
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: primaryDark,
-        iconTheme: IconThemeData(color: softWhite),
-        title: Text("📡 WiFi Killer", style: TextStyle(fontFamily: 'Orbitron', color: softWhite)),
+        backgroundColor: const Color(0xFF8B0000),
+        title: const Text("📡 WiFi Killer", style: TextStyle(fontFamily: 'Orbitron')),
       ),
       body: Padding(
         padding: const EdgeInsets.all(25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "WiFi Killer",
               style: TextStyle(
-                color: cyanLight,
+                color: Colors.redAccent,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Orbitron',
@@ -180,9 +165,9 @@ class _WifiKillerPageState extends State<WifiKillerPage> {
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                color: cardBlue,
+                color: Colors.black54,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: cyanLight.withOpacity(0.5)),
+                border: Border.all(color: Colors.redAccent.shade100),
               ),
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -197,48 +182,24 @@ class _WifiKillerPageState extends State<WifiKillerPage> {
             ),
             const SizedBox(height: 40),
             Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  gradient: isKilling 
-                      ? null
-                      : LinearGradient(
-                          colors: [primaryBlue, cyanLight],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                  boxShadow: isKilling
-                      ? null
-                      : [
-                          BoxShadow(
-                            color: cyanLight.withOpacity(0.5),
-                            blurRadius: 15,
-                            offset: Offset(0, 5),
-                          ),
-                        ],
+              child: ElevatedButton.icon(
+                onPressed: isKilling ? _stopFlood : _startFlood,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isKilling ? Colors.grey : const Color(0xFF8B0000),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                 ),
-                child: ElevatedButton.icon(
-                  onPressed: isKilling ? _stopFlood : _startFlood,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isKilling ? Colors.grey : Colors.transparent,
-                    foregroundColor: softWhite,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                    elevation: isKilling ? 0 : 0,
-                    shadowColor: Colors.transparent,
-                  ),
-                  icon: Icon(isKilling ? Icons.stop : Icons.wifi_off, color: softWhite),
-                  label: Text(
-                    isKilling ? "STOP" : "START KILL",
-                    style: TextStyle(fontSize: 16, letterSpacing: 2, fontFamily: 'Orbitron', color: softWhite),
-                  ),
+                icon: Icon(isKilling ? Icons.stop : Icons.wifi_off),
+                label: Text(
+                  isKilling ? "STOP" : "START KILL",
+                  style: const TextStyle(fontSize: 16, letterSpacing: 2, fontFamily: 'Orbitron'),
                 ),
               ),
             ),
             const SizedBox(height: 20),
             if (isKilling)
-              Center(
-                child: CircularProgressIndicator(color: cyanLight),
+              const Center(
+                child: CircularProgressIndicator(color: Colors.redAccent),
               ),
           ],
         ),
